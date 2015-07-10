@@ -5,10 +5,8 @@ import MessageParser from './MessageParser';
 import SlackListener from 'slack-client';
 import appConfig from '../appConfig.json';
 
-const SLACK_TOKEN = appConfig.token;
-
-let slackApi = new SlackApi(SLACK_TOKEN);
-let slackListener = new SlackListener(SLACK_TOKEN, true, true);
+let slackApi = new SlackApi(appConfig.slack.token);
+let slackListener = new SlackListener(appConfig.slack.token, true, true);
 let messageParser = new MessageParser();
 
 let bot = new ConverseBot({
