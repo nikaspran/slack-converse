@@ -1,0 +1,16 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "node": true,
+    "es6": true,
+    "mocha": true
+  },
+  "rules": {
+    "quotes": [
+      2,
+      "single"
+    ],
+    "eol-last": [0],
+    "no-underscore-dangle": [0]
+  }
+}
