@@ -3,8 +3,9 @@ import SlackApi from './SlackApi';
 import ConverseBot from './ConverseBot';
 import MessageParser from './MessageParser';
 import SlackListener from 'slack-client';
+import appConfig from '../appConfig.json';
 
-const SLACK_TOKEN = 'xoxp-7453471159-7453546145-7453440514-7ed12a';
+const SLACK_TOKEN = appConfig.token;
 
 let slackApi = new SlackApi(SLACK_TOKEN);
 let slackListener = new SlackListener(SLACK_TOKEN, true, true);
