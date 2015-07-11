@@ -6,12 +6,11 @@ function splitParticipants(str) {
 }
 
 class MessageParser {
-  getCommand(message) {
-    if (message.indexOf('!chat') === -1) {
+  parseStartConversation(message) {
+    let [match, args] = message.match(/^!converse (?:about )?(.+)/) || [];
+    if (!match) {
       return undefined;
     }
-
-    let [, args] = message.match(/!chat (?:about )?(.+)/);
 
     //TODO: I'm not clever enough for this to be regexp right now
     let splitByWith = args.split(BY_WITH);

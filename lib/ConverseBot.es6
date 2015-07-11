@@ -11,7 +11,7 @@ class Converse {
     });
 
     this.slackListener.on('message', (message) => {
-      console.log(this.messageParser.getCommand(message.text));
+      console.log(this.messageParser.parseStartConversation(message.text));
     });
 
     this.slackListener.on('error', (error) => {
