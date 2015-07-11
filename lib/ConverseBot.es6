@@ -1,8 +1,9 @@
 'use strict';
 class Converse {
-  constructor({slackListener, messageParser}) {
+  constructor({slackListener, messageParser, slackApi}) {
     this.slackListener = slackListener;
     this.messageParser = messageParser;
+    this.slackApi = slackApi;
   }
 
   start() {
@@ -11,7 +12,12 @@ class Converse {
     });
 
     this.slackListener.on('message', (message) => {
-      console.log(this.messageParser.parseStartConversation(message.text));
+      let startConversationCmd = this.messageParser.parseStartConversation(message.text);
+
+      if (startConversationCmd) {
+        let name = `cv ${startConversationCmd.topic}`.replace(/ /g, '-');
+        this.slackApi.createChannel(name);
+      }
     });
 
     this.slackListener.on('error', (error) => {

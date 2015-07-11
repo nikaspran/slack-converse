@@ -6,27 +6,30 @@ class SlackApi {
     this.token = token;
   }
 
-  _request(options) {
+  static _assertRequired(value, valueName) {
+    if (!value) {
+      throw new Error(`Parameter "${valueName}" is required`);
+    }
+  }
+
+  _request({path, queryParams}) {
     return new Promise((resolve, reject) => {
       request({
-        qs: {token: this.token},
-        ...options
+        qs: {token: this.token, ...queryParams},
+        url: `https://slack.com/api${path}`
       }, (err, response) => {
         if (err) {
           reject(err);
         } else {
-          resolve(response);
+          resolve(response.body);
         }
       });
     });
   }
 
-  hello() {
-    console.log(`Token ${this.token}`);
-
-    return this._request({url: 'https://slack.com/api/auth.test'}).then((response) => {
-      console.log(response.body);
-    });
+  createChannel(name) {
+    SlackApi._assertRequired(name, 'name');
+    return this._request({path: '/channels.create', queryParams: {name}});
   }
 }
 

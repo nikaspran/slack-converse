@@ -21,6 +21,9 @@
     "gulp-eslint": "^0.15.0",
     "gulp-mocha": "^2.1.2",
     "mocha": "^2.2.5",
-    "run-sequence": "^1.1.1"
+    "nock": "^2.7.0",
+    "run-sequence": "^1.1.1",
+    "sinon": "^1.15.4",
+    "sinon-expect": "^0.2.0"
   }
 }

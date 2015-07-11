@@ -1,5 +1,5 @@
 'use strict';
-import expect from 'expect.js';
+import {expect} from './common';
 import MessageParser from '../lib/MessageParser';
 
 describe('MessageParser', () => {
