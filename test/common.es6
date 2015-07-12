@@ -7,3 +7,14 @@ let enhancedExpect = sinonExpect.enhance(originalExpect, originalSinon, 'toHaveB
 enhancedExpect.toHaveBeen = enhancedExpect.toHaveBeen || {}; //enable syntax highlighting
 export const expect = enhancedExpect;
 export const sinon = originalSinon;
+export const mockPromise = {
+  noop: {
+    then: () => {
+    },
+    catch: () => {
+    }
+  },
+  resolveTo: (value) => {
+    return {then: (fn) => fn(value)};
+  }
+};

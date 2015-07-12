@@ -18,8 +18,8 @@ class SlackApi {
         qs: {token: this.token, ...queryParams},
         url: `https://slack.com/api${path}`
       }, (err, response) => {
-        if (err) {
-          reject(err);
+        if (err || response.error) {
+          reject(err || response.error);
         } else {
           resolve(response.body);
         }
@@ -30,6 +30,16 @@ class SlackApi {
   createChannel(name) {
     SlackApi._assertRequired(name, 'name');
     return this._request({path: '/channels.create', queryParams: {name}});
+  }
+
+  inviteToChannel(channelId, userId) {
+    SlackApi._assertRequired(channelId, 'channelId');
+    SlackApi._assertRequired(userId, 'userId');
+    return this._request({path: '/channels.invite', queryParams: {channel: channelId, user: userId}});
+  }
+
+  listUsers() {
+    return this._request({path: '/users.list'});
   }
 }
 

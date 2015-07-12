@@ -1,5 +1,5 @@
 'use strict';
-import {expect, sinon} from './common';
+import {expect, sinon, mockPromise} from './common';
 import ConverseBot from '../lib/ConverseBot';
 
 describe('ConverseBot', () => {
@@ -14,11 +14,11 @@ describe('ConverseBot', () => {
         on: sinon.stub(),
         login: sinon.stub()
       },
-      messageParser: mockMessageParser = {
-        parseStartConversation: sinon.stub()
-      },
+      messageParser: mockMessageParser = {parseStartConversation: sinon.stub()},
       slackApi: mockSlackApi = {
-        createChannel: sinon.stub()
+        createChannel: sinon.stub().returns(mockPromise.noop),
+        inviteToChannel: sinon.stub(),
+        listUsers: sinon.stub().returns(mockPromise.resolveTo({members: []}))
       }
     });
   });
@@ -45,6 +45,13 @@ describe('ConverseBot', () => {
       converseBot.start();
     });
 
+    describe('on open', () => {
+      it('should get the user list', () => {
+        triggerSlackEvent('open');
+        expect(mockSlackApi.listUsers).toHaveBeen.called();
+      });
+    });
+
     describe('on message', () => {
       describe('that does not match any pattern', () => {
         it('should not create any channels', () => {
@@ -62,6 +69,21 @@ describe('ConverseBot', () => {
         it('should create a channel with a dasherized name', () => {
           triggerSlackEvent('message', {text: 'startConversation'});
           expect(mockSlackApi.createChannel).toHaveBeen.calledWith('cv-some-topic');
+        });
+        it('should invite all the participants to the channel', () => {
+          mockSlackApi.listUsers.returns(mockPromise.resolveTo({
+            members: [
+              {name: 'p1', id: 'p1-id'},
+              {name: 'p2', id: 'p2-id'}
+            ]
+          }));
+          mockSlackApi.createChannel.returns(mockPromise.resolveTo({
+            channel: {id: 'channelId'}
+          }));
+          triggerSlackEvent('open');
+          triggerSlackEvent('message', {text: 'startConversation'});
+          expect(mockSlackApi.inviteToChannel).toHaveBeen.calledWith('channelId', 'p1-id');
+          expect(mockSlackApi.inviteToChannel).toHaveBeen.calledWith('channelId', 'p2-id');
         });
       });
     });
