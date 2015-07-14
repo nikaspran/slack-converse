@@ -17,11 +17,15 @@ class SlackApi {
       request({
         qs: {token: this.token, ...queryParams},
         url: `https://slack.com/api${path}`
-      }, (err, response) => {
-        if (err || response.error) {
-          reject(err || response.error);
+      }, (err, response, body) => {
+        //console.log('=====');
+        //console.log(path, queryParams, err, response.body);
+        //console.log('=====');
+        let json = body && JSON.parse(body);
+        if (err || json.error) {
+          reject(err || json.error);
         } else {
-          resolve(response.body);
+          resolve(json);
         }
       });
     });
@@ -36,6 +40,11 @@ class SlackApi {
     SlackApi._assertRequired(channelId, 'channelId');
     SlackApi._assertRequired(userId, 'userId');
     return this._request({path: '/channels.invite', queryParams: {channel: channelId, user: userId}});
+  }
+
+  setChannelTopic(channelId, topic) {
+    SlackApi._assertRequired(channelId, 'channelId');
+    return this._request({path: '/channels.setTopic', queryParams: {channel: channelId, topic: topic}});
   }
 
   listUsers() {

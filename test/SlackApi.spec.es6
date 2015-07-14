@@ -5,6 +5,7 @@ import SlackApi from '../lib/SlackApi';
 
 describe('SlackApi', () => {
   const MOCK_TOKEN = 'xxx';
+  const RESULT_OK = {ok: true};
   let slackApi;
   let scope;
 
@@ -44,11 +45,25 @@ describe('SlackApi', () => {
     });
   });
 
+  describe('setChannelTopic()', () => {
+    it('should require a channelId', () => {
+      expect(slackApi.setChannelTopic).to.withArgs(undefined, 'userId').throwException(/Parameter "channelId" is required/);
+    });
+    it('should do a GET request at /api/channels.setTopic with the "channel" and "topic" query params', () => {
+      scope = scope.get('/api/channels.setTopic').query({
+        token: MOCK_TOKEN,
+        channel: 'aChannel',
+        topic: 'aTopic'
+      }).reply(200);
+      return slackApi.setChannelTopic('aChannel', 'aTopic').then(scope.done);
+    });
+  });
+
   describe('listUsers()', () => {
     it('should do a GET request at /api/users.list and return the data', () => {
-      scope = scope.get('/api/users.list').query({token: MOCK_TOKEN}).reply(200, 'result');
+      scope = scope.get('/api/users.list').query({token: MOCK_TOKEN}).reply(200, RESULT_OK);
       return slackApi.listUsers('someName').then((result) => {
-        expect(result).to.eql('result');
+        expect(result).to.eql(RESULT_OK);
         scope.done();
       });
     });
